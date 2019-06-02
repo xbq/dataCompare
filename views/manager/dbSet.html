@@ -1,0 +1,56 @@
+{% extends 'layout.html' %} {% block main %}
+<link rel="stylesheet" href="/public/css/manager/userList.css">
+<div style="padding: 10px 20px;">
+    <div class="layui-card">
+        <div class="layui-card-header">远程服务器参数设置</div>
+        <div class="layui-card-body">
+            <form class="layui-form x-left" action="" style="padding:10px 15px;margin-bottom: 0;height: 38px;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="text-align: center">ip</label>
+                    <div class="layui-input-inline" style="width: 280px;margin-right: 0">
+                        <input type="text" name="ip" placeholder="输入ip" class="layui-input" lay-verify="required">
+                    </div>
+                    <label class="layui-form-label" style="text-align: center">端口</label>
+                    <div class="layui-input-inline" style="width: 280px;margin-right: 0">
+                        <input type="text" name="port" placeholder="输入项目编号" class="layui-input" lay-verify="required|number">
+                    </div>
+                    <label class="layui-form-label" style="text-align: center">实例名</label>
+                    <div class="layui-input-inline" style="width: 280px;margin-right: 0">
+                        <input type="text" name="instance" placeholder="输入实例名" class="layui-input" lay-verify="required|number">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="text-align: center">用户名</label>
+                    <div class="layui-input-inline" style="width: 280px;margin-right: 0">
+                        <input type="text" name="username" placeholder="输入用户名" class="layui-input" lay-verify="required">
+                    </div>
+                    <label class="layui-form-label" style="text-align: center">密码</label>
+                    <div class="layui-input-inline" style="width: 280px;margin-right: 0">
+                        <input type="text" name="password" placeholder="输入密码" class="layui-input">
+                    </div>
+                    <label class="layui-form-label" style="text-align: center">数据库名</label>
+                    <div class="layui-input-inline" style="width: 280px;margin-right: 0">
+                        <input type="text" name="database" placeholder="输入数据库名" class="layui-input" lay-verify="required">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block" style="text-align: right;padding-right: 20px;">
+                        <button class="layui-btn" lay-submit lay-filter="submit" style="color: #fff;background: #1789FF;">提交
+                        </button>
+                        <button class="layui-btn" lay-submit lay-filter="connectTest" style="color: #fff;background: #1789FF;">连接测试
+                        </button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+{%endblock%} {% block js %}
+<script src="/public/js/manager/dbSet.js"></script>
+{% endblock %}

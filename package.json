@@ -1,0 +1,44 @@
+{
+  "name": "projectmanager",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon app.js",
+    "webpack": "webpack --mode production --colors --display-reasons --dispay-modules --progress"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "consolidate": "^0.15.1",
+    "cookie-parser": "~1.4.3",
+    "cookies": "^0.7.1",
+    "csv-parse": "^4.4.1",
+    "debug": "~2.6.9",
+    "express": "~4.15.5",
+    "formidable": "^1.2.1",
+    "jshint": "^2.9.5",
+    "markdown": "^0.5.0",
+    "mongoose": "^5.0.3",
+    "morgan": "~1.9.0",
+    "mysql": "^2.15.0",
+    "mysql2": "^1.5.2",
+    "node-xlsx": "^0.15.0",
+    "nodemon": "^1.18.7",
+    "sequelize": "^4.34.0",
+    "serve-favicon": "~2.4.5",
+    "swig": "^1.4.2",
+    "tedious": "^6.1.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-latest": "^6.24.1",
+    "css-loader": "^0.28.10",
+    "html-webpack-plugin": "^3.0.6",
+    "node-postgres-hstore": "^0.0.6",
+    "pg": "^7.4.1",
+    "pg-hstore": "^2.3.2",
+    "style-loader": "^0.20.3",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^3.1.1"
+  }
+}

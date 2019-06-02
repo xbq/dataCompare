@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>民政信息查询系统</title>
+    <link rel="icon" href="/public/images/title.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/public/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/public/plugins/layui/css/layui.css"> {% block head %}{% endblock %}
+    <style>
+        .x-slide_left {
+            width: 17px;
+            height: 61px;
+            background: url(/public/images/shrink.png) 0 0 no-repeat;
+            position: absolute;
+            top: 50%;
+            left: 0px;
+            margin-top: -5%;
+            cursor: pointer;
+        }
+        
+        .x-slide_right {
+            width: 17px;
+            height: 61px;
+            background: url(/public/images/shrink.png) 0 -61px no-repeat;
+            position: absolute;
+            top: 50%;
+            left: 0px;
+            margin-top: -5%;
+            cursor: pointer;
+        }
+        
+        .layui-header {
+            height: 50px;
+        }
+        
+        .layui-body {
+            top: 50px;
+        }
+        
+        .layui-side {
+            top: 50px;
+        }
+        
+        .layui-nav .layui-nav-item {
+            height: 50px;
+        }
+        
+        .layui-nav-tree .layui-nav-bar {
+            color: #1789ff !important;
+        }
+        
+        .fa.fa-file-text:before {
+            content: "\f15c";
+        }
+        
+        .layui-body {
+            left: 0;
+        }
+        
+        .logoSpan {
+            color: #fff;
+            font-size: 25px;
+            line-height: 25px;
+            letter-spacing: 8px;
+        }
+        
+        .layui-layout-admin .layui-logo {
+            width: 400px;
+        }
+    </style>
+    <script>
+        function logout() {
+            layer.confirm('确定退出？', function(index) {
+                layer.close(index);
+                window.location = '/';
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header" style="background-color: #1789FF;height: 50px">
+            <div class="layui-logo" style="text-align:left;padding-left:20px"><span class="logoSpan">民政信息查询系统</span></div>
+            <!-- 头部区域（可配合layui已有的水平导航） -->
+            <ul class="layui-nav layui-layout-right" style="right: 100px">
+                <li class="layui-nav-item"><a href="/peopleList">数据对比</a></li>
+                <li class="layui-nav-item"><a href="/dbSet">服务设置</a></li>
+
+            </ul>
+            <ul class="layui-nav layui-layout-right" style="margin-right:15px">
+                <li class="layui-nav-item">
+                    <a href="javascript:;" style="font-size: 16px;color: white;">
+                        <img src="/public/images/tx.jpg" class="layui-nav-img"> {{userInfo.username}}
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" id="infomation">基本资料</a></dd>
+                        <dd><a href="javascript:;" id="passwordSet">安全设置</a></dd>
+                        <dd><a id="btn_logout" href="javascript:;" onclick="logout()">退出</a></dd>
+                    </dl>
+                </li>
+            </ul>
+            <input type="hidden" id="userId" value="{{userInfo.id}}">
+            <input type="hidden" id="isAdmin" value="{{userInfo.isAdmin}}">
+            <input type="hidden" id="role" value="{{userInfo.role}}">
+        </div>
+
+        <div class="layui-body" style="top: 50px">
+            <!-- 内容主体区域 -->
+            <div style="padding: 15px;">
+                {% block main %}{% endblock %}
+            </div>
+        </div>
+
+        <!--<div class="layui-footer">
+        项目管理系统
+    </div>-->
+    </div>
+
+</body>
+<script src="/public/plugins/layui/layui.js"></script>
+<script src="/public/plugins/base64.js"></script>
+<script src="/public/js/manager/layout.js"></script>
+{% block js %}{% endblock %}
+
+</html>

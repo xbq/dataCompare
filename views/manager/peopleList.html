@@ -1,0 +1,47 @@
+{% extends 'layout.html' %} {% block main %}
+<link rel="stylesheet" href="/public/css/manager/userList.css">
+<style>
+    .layui-elem-quote {
+        border-left: 5px solid #1789FF;
+    }
+    
+    .btn-lightblue {
+        background-color: #1789FF;
+    }
+</style>
+<div style="padding: 10px 20px;">
+    <form class="layui-form x-left layui-elem-quote" action="" style="padding:10px 15px;margin-bottom: 0;height: 38px;">
+        <div class="layui-form-pane">
+            <div class="layui-input-inline" style="width:200px;margin-right: 15px">
+                <input type="text" name="idcard" autocomplete="off" placeholder="身份证关键字" class="layui-input">
+            </div>
+            <div class="layui-input-inline" style="width:140px;margin-right: 15px">
+                <input type="text" name="name" autocomplete="off" placeholder="姓名关键字" class="layui-input">
+            </div>
+            <div class="layui-input-inline" style="width:140px;margin-right: 15px">
+                <select name="status" id="status">
+                    <option value="">请选择生卒情况</option>
+                    <option value="1">生</option>
+                    <option value="0">死</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <button class="layui-btn btn-lightblue" lay-submit="" lay-filter="searchProject"><i class="layui-icon">&#xe615;</i>查询</button>
+            </div>
+            <button id="btnAdd" class="layui-btn x-right btn-lightblue" lay-submit="" lay-filter="addPeople" style="float: right;margin-left: 10px">信息录入</button>
+            <button id="btnCompare" class="layui-btn x-right btn-lightblue" lay-submit="" lay-filter="compareData" style="float: right;margin-left: 10px">数据对比</button>
+            <button type="button" class="layui-btn x-right btn-lightblue" id="uploadExcel" style="float: right;margin-left: 10px"><i class="layui-icon"></i>上传文件</button>
+        </div>
+    </form>
+    <input type="hidden" id="role" value="{{userInfo.role}}">
+    <input type="hidden" id="current" value="{{userInfo.id}}">
+    <table id="peopleList" style="margin:10px 15px;" lay-filter="handler"></table>
+    <script type="text/html" id="toolBar">
+        <a class="layui-btn layui-btn-sm btn-lightblue" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+    </script>
+</div>
+
+{%endblock%} {% block js %}
+<script src="/public/js/manager/peopleList.js"></script>
+{% endblock %}

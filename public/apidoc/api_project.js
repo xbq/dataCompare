@@ -1,0 +1,16 @@
+define({
+  "name": "weekly接口文档",
+  "version": "0.1.0",
+  "description": "weekly接口文档",
+  "title": "weekly接口文档",
+  "url": "http://localhost:8004",
+  "sampleUrl": false,
+  "defaultVersion": "0.0.0",
+  "apidoc": "0.3.0",
+  "generator": {
+    "name": "apidoc",
+    "time": "2018-12-09T09:11:26.760Z",
+    "url": "http://apidocjs.com",
+    "version": "0.17.7"
+  }
+});

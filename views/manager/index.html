@@ -1,0 +1,15 @@
+{% extends 'layout.html' %} {% block main %}
+
+<div class="layui-elem-quote" style="font-size: 16px;margin-bottom: 10px;background-color: #fff;">欢迎使用《》</div>
+<div class="layui-row">
+    <div id="div_projectAndType" class="layui-col-md12" style="height: 600px;margin: 10px 0;background-color: rgb(247, 239, 239);border: 1px solid #4169e182"></div>
+    <div id="div_project" class="layui-col-md6" style="height: 600px;margin: 10px 0;background-color: rgb(247, 239, 239);padding: 20px;border: 1px solid #4169e182"></div>
+    <div id="div_taskType" class="layui-col-md6" style="height: 600px;margin: 10px 0;background-color: rgb(247, 239, 239);padding: 20px;border: 1px solid #4169e182"></div>
+    <div id="div_month" class="layui-col-md6" style="height: 600px;margin: 10px 0;background-color: rgb(247, 239, 239);padding: 20px;border: 1px solid #4169e182"></div>
+    <div id="div_week" class="layui-col-md6" style="height: 600px;margin: 10px 0;background-color: rgb(247, 239, 239);padding: 20px;border: 1px solid #4169e182"></div>
+</div>
+{%endblock%} {% block js %}
+<script src="/public/plugins/jquery/jquery.min.js"></script>
+<script src="/public/plugins/echarts/echarts-all.js"></script>
+<script src="/public/js/manager/index.js"></script>
+{% endblock %}
