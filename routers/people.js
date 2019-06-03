@@ -4,7 +4,7 @@ var router = express.Router();
 var People = require('../models/people');
 var PeopleRemote = require('../models/peopleRemote');
 var PeopleMssql = require('../models/PeopleMssql');
-var Temp = require('../models/temp');
+var dbms = require('../models/dbMs');
 //统一返回格式
 var responseData = {};
 
@@ -14,24 +14,6 @@ router.get('/all', function(req, res) {
     var limit = Number(req.query.limit || 10);
     var offset = (page - 1) * limit;
     People.findAndCountAll({
-        limit: limit,
-        offset: offset
-    }).then(function(result) {
-        res.json({
-            code: 0,
-            count: result.count,
-            data: result.rows,
-            message: ""
-        });
-    })
-});
-
-//项目列表
-router.get('/allMs', function(req, res) {
-    var page = req.query.page || 1;
-    var limit = Number(req.query.limit || 10);
-    var offset = (page - 1) * limit;
-    PeopleMssql.findAndCountAll({
         limit: limit,
         offset: offset
     }).then(function(result) {
@@ -80,25 +62,6 @@ router.get('/find', function(req, res) {
             message: ""
         });
     })
-});
-
-//项目查询接口
-router.get('/isProjectManger', function(req, res) {
-    var projectId = req.query.projectId;
-    var userId = req.query.userId;
-    var queryBody = {};
-    if (projectId && userId) {
-        queryBody._id = projectId;
-        queryBody.manager = userId;
-        People.findOne(queryBody).then(function(project) {
-            if (project) {
-                res.json({
-                    isProjectManger: true
-                })
-            }
-        });
-    }
-
 });
 
 //删除项目
@@ -184,9 +147,15 @@ router.get('/edit', function(req, res) {
     res.render('manager/editPeople');
 });
 
+router.get('/getAllMs', (req, res) => {
+
+    dbms.excute('select * from people').then(result => {
+        res.json({ data: result })
+    });
+});
+
 //编辑项目页面跳转
 router.get('/findOneById', function(req, res) {
-
     People.findById(req.query.id).then(function(people) {
         res.json({
             data: people
@@ -210,14 +179,11 @@ function updateByCompare(idcard, index, len, res, changeList = []) {
             idcard: idcard
         }
     }).then(function(people) {
-        PeopleRemote.findOne({
-            where: {
-                idcard: idcard
-            }
-        }).then(function(peopleRemote) {
-            if (peopleRemote) {
+        var strSql = `select * from people where idcard = '${idcard}'`;
+        dbms.excute(strSql).then(function(peopleRemote) {
+            if (peopleRemote && peopleRemote.length == 1) {
                 //远程数据库有数据但是数据有出入的情况
-                if (!isObjectValueEqual(people.dataValues, peopleRemote.dataValues)) {
+                if (!isObjectValueEqual(people.dataValues, peopleRemote[0], ['id'])) {
                     changeList.push(idcard);
                 }
             } else {
@@ -226,13 +192,18 @@ function updateByCompare(idcard, index, len, res, changeList = []) {
             }
             //只有比较完最后一条数据才返回结果
             if (index == len - 1) {
-                res.json({ changeList })
+                res.json({
+                    changeList
+                })
             }
         })
     })
 }
 
-function isObjectValueEqual(a, b) {
+
+function isObjectValueEqual(a, b, ignoreAttrs = []) {
+    console.log(a);
+    console.log(b);
     var aProps = Object.getOwnPropertyNames(a);
     var bProps = Object.getOwnPropertyNames(b);
 
@@ -242,10 +213,12 @@ function isObjectValueEqual(a, b) {
 
     for (var i = 0; i < aProps.length; i++) {
         var propName = aProps[i];
-        var propA = a[propName];
-        var propB = b[propName];
-        if (propA !== propB) {
-            return false;
+        if (propName.indexOf(ignoreAttrs) == -1) {
+            var propA = a[propName];
+            var propB = b[propName];
+            if (propA !== propB) {
+                return false;
+            }
         }
     }
     return true;

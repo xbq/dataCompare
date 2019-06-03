@@ -80,7 +80,12 @@ layui.use(['upload', 'table', 'form', 'layer'], function() {
                 idcardArr: idcards.substr(0, idcards.length - 1)
             },
             success: function(res) {
-                layer.alert("信息有出入的人员的身份证号码为：<br/>" + res.changeList.join('<br/>'));
+                if (res.changeList.length > 0) {
+                    layer.alert("信息有出入的人员的身份证号码为：<br/>" + res.changeList.join('<br/>'));
+                } else {
+                    layer.alert("所选数据和远程数据库的信息完全相同！");
+                }
+
 
             }
         });
