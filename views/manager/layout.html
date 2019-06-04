@@ -106,11 +106,9 @@
             <input type="hidden" id="role" value="{{userInfo.role}}">
         </div>
 
-        <div class="layui-body" style="top: 50px">
+        <div class="layui-body" style="top: 50px;background-color: #eee;bottom: 0;">
             <!-- 内容主体区域 -->
-            <div style="padding: 15px;">
-                {% block main %}{% endblock %}
-            </div>
+            {% block main %}{% endblock %}
         </div>
 
         <!--<div class="layui-footer">

@@ -166,14 +166,16 @@ router.get('/findOneById', function(req, res) {
 //对比
 router.post('/compare', function(req, res) {
     var idcardArr = req.body.idcardArr.split(',');
-    var changeList = [];
+    var changeList = [],
+        remoteList = [],
+        remoteChangeList = [];
     var len = idcardArr.length;
     idcardArr.forEach(function(idcard, index) {
-        updateByCompare(idcard, index, len, res, changeList);
+        updateByCompare(idcard, index, len, res, changeList, remoteList, remoteChangeList);
     });
 });
 
-function updateByCompare(idcard, index, len, res, changeList = []) {
+function updateByCompare(idcard, index, len, res, changeList = [], remoteList = [], remoteChangeList = []) {
     People.findOne({
         where: {
             idcard: idcard
@@ -182,9 +184,11 @@ function updateByCompare(idcard, index, len, res, changeList = []) {
         var strSql = `select * from people where idcard = '${idcard}'`;
         dbms.excute(strSql).then(function(peopleRemote) {
             if (peopleRemote && peopleRemote.length == 1) {
+                remoteList.push(peopleRemote[0]);
                 //远程数据库有数据但是数据有出入的情况
                 if (!isObjectValueEqual(people.dataValues, peopleRemote[0], ['id'])) {
                     changeList.push(idcard);
+                    remoteChangeList.push(peopleRemote[0]);
                 }
             } else {
                 //远程数据库没有数据的情况
@@ -193,7 +197,9 @@ function updateByCompare(idcard, index, len, res, changeList = []) {
             //只有比较完最后一条数据才返回结果
             if (index == len - 1) {
                 res.json({
-                    changeList
+                    changeList,
+                    remoteList,
+                    remoteChangeList
                 })
             }
         })

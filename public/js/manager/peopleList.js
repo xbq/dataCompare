@@ -24,7 +24,6 @@ layui.use(['upload', 'table', 'form', 'layer'], function() {
     //第一个实例
     var peopleTable = table.render({
         elem: '#peopleList',
-        height: 600,
         url: '/people/all' //数据接口
             ,
         page: true //开启分页
@@ -33,6 +32,7 @@ layui.use(['upload', 'table', 'form', 'layer'], function() {
         cols: [
             [ //表头
                 { type: 'checkbox' },
+                { field: 'id', width: 100, title: '序号', align: 'center' },
                 { field: 'idcard', width: 200, title: '身份证', align: 'center' },
                 { field: 'name', width: 100, title: '姓名', align: 'center' },
                 { width: 100, title: '情况', templet: function(data) { return data.status == "0" ? '卒' : '生' }, align: 'center' },
@@ -52,22 +52,42 @@ layui.use(['upload', 'table', 'form', 'layer'], function() {
         return false;
     });
     //监听提交
-    form.on('submit(addPeople)', function() {
-        layer.open({
-            type: 2,
-            title: '添加个人信息',
-            shadeClose: true,
-            resize: false,
-            shade: false,
-            area: ['400px', '300px'],
-            content: '/people/add'
+    //监听提交
+    form.on('submit(addPeople)', function(data) {
+        $.ajax({
+            type: 'POST',
+            url: '/people/add',
+            data: data.field,
+            success: function(res) {
+                if (!res.code) {
+                    layer.msg(
+                        res.message, {
+                            icon: 1,
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        },
+                        function() {
+                            peopleTable.reload();
+                            $("#btnReset").click()
+                        }
+                    );
+
+
+                } else {
+                    layer.msg(res.message, {
+                        icon: 5,
+                        shift: 6
+                    });
+                }
+            }
         });
-        return false
+        return false;
     });
 
     //监听提交
     form.on('submit(compareData)', function() {
         var checkStatus = table.checkStatus(peopleTable.config.id);
+        var selectedCount = checkStatus.data.length
+        $("#selectedCount").text(selectedCount);
         var idcards = '';
         //拿到每条数据的唯一标识，将唯一标识用逗号隔开传给后台，后台返回不相同的数据即可
         checkStatus.data.forEach(function(item) {
@@ -80,12 +100,35 @@ layui.use(['upload', 'table', 'form', 'layer'], function() {
                 idcardArr: idcards.substr(0, idcards.length - 1)
             },
             success: function(res) {
-                if (res.changeList.length > 0) {
-                    layer.alert("信息有出入的人员的身份证号码为：<br/>" + res.changeList.join('<br/>'));
-                } else {
-                    layer.alert("所选数据和远程数据库的信息完全相同！");
-                }
+                var changeCount = res.changeList.length;
+                $("#changeCount").text(changeCount);
+                var selectRemoteCount = res.remoteList.length;
+                $("#selectRemoteCount").text(selectRemoteCount);
+                var noChangeCount = selectedCount - changeCount;
+                $("#noChangeCount").text(noChangeCount);
+                table.render({
+                    elem: '#peopleSelectList',
+                    data: checkStatus.data,
+                    cols: [
+                        [ //表头
+                            { field: 'idcard', title: '身份证', align: 'center' },
+                            { field: 'name', title: '姓名', align: 'center' },
+                            { title: '情况', templet: function(data) { return data.status == "0" ? '卒' : '生' }, align: 'center' }
+                        ]
+                    ]
+                });
 
+                table.render({
+                    elem: '#peopleRemoteList',
+                    data: res.remoteChangeList,
+                    cols: [
+                        [ //表头
+                            { field: 'idcard', title: '身份证', align: 'center' },
+                            { field: 'name', title: '姓名', align: 'center' },
+                            { title: '健康情况', templet: function(data) { return data.status == "0" ? '卒' : '生' }, align: 'center' }
+                        ]
+                    ],
+                });
 
             }
         });

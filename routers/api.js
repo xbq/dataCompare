@@ -5,7 +5,7 @@ var User = require('../models/User');
 var formidable = require('formidable');
 var fs = require('fs');
 var xlsx = require('node-xlsx');
-
+var mssql = require('mssql');
 
 //统一返回格式
 var responseData = {};
@@ -19,25 +19,6 @@ router.use(function(req, res, next) {
     next();
 });
 
-/**
- * @api {post} /login 用户登录
- * @apiDescription 用户登录
- * @apiName submit-login
- * @apiGroup User
- * @apiParam {string} username 用户名
- * @apiParam {string} password 密码
- * @apiSuccess {json} result
- * @apiSuccessExample {json} Success-Response:
- *  {
- *      "success" : "true",
- *      "result" : {
- *          "name" : "loginName",
- *          "password" : "loginPass"
- *      }
- *  }
- * @apiSampleRequest http://localhost:8003/login
- * @apiVersion 1.0.0
- */
 router.post('/login', function(req, res) {
     if (req && req.body) {
         //查询数据库，验证用户名密码是否正确
@@ -64,6 +45,36 @@ router.post('/login', function(req, res) {
     }
 });
 
+//mssql连接测试
+router.post('/testConnect', function(req, res) {
+    var dbConfig = {
+        user: req.body.username,
+        password: req.body.password,
+        server: req.body.server,
+        database: req.body.database,
+        port: req.body.port,
+        options: {
+            instanceName: req.body.instanceName
+        },
+        pool: {
+            min: 0,
+            max: 10,
+            idleTimeoutMillis: 3000
+        }
+    };
+    var testSql = 'select getdate() as date';
+    new mssql.ConnectionPool(dbConfig).connect().then(pool => {
+        return pool.request().query(testSql)
+    }).then(result => {
+        mssql.close();
+        res.json(result.recordset);
+    }).catch(err => {
+        mssql.close();
+        res.json(err);
+    });
+
+});
+
 router.get('/logout', function(req, res, next) {
     req.cookies.set('userInfo', null);
     res.json(responseData);
@@ -75,6 +86,10 @@ router.get('/', function(req, res, next) {
 
 router.get('/peopleList', function(req, res, next) {
     res.render('manager/peopleList');
+});
+
+router.get('/peopleList1', function(req, res, next) {
+    res.render('manager/peopleList1');
 });
 
 router.get('/dbSet', function(req, res, next) {
