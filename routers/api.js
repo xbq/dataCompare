@@ -11,7 +11,7 @@ var mssql = require('mssql');
 var responseData = {};
 
 //初始化处理
-router.use(function(req, res, next) {
+router.use(function (req, res, next) {
     responseData = {
         code: 0,
         message: ''
@@ -19,12 +19,12 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.post('/login', function(req, res) {
+router.post('/login', function (req, res) {
     if (req && req.body) {
         //查询数据库，验证用户名密码是否正确
         User.findOne({
             where: req.body
-        }).then(function(userInfo) {
+        }).then(function (userInfo) {
             if (!userInfo) {
                 responseData.code = 3;
                 responseData.message = "用户名或密码错误";
@@ -46,7 +46,7 @@ router.post('/login', function(req, res) {
 });
 
 //mssql连接测试
-router.post('/testConnect', function(req, res) {
+router.post('/testConnect', function (req, res) {
     var dbConfig = {
         user: req.body.username,
         password: req.body.password,
@@ -75,29 +75,29 @@ router.post('/testConnect', function(req, res) {
 
 });
 
-router.get('/logout', function(req, res, next) {
+router.get('/logout', function (req, res, next) {
     req.cookies.set('userInfo', null);
     res.json(responseData);
 });
 
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     res.render('login');
 });
 
-router.get('/peopleList', function(req, res, next) {
+router.get('/peopleList', function (req, res, next) {
     res.render('manager/peopleList');
 });
 
-router.get('/peopleList1', function(req, res, next) {
+router.get('/peopleList1', function (req, res, next) {
     res.render('manager/peopleList1');
 });
 
-router.get('/dbSet', function(req, res, next) {
+router.get('/dbSet', function (req, res, next) {
     res.render('manager/dbSet');
 });
 
 
-router.post('/upload', function(req, res) {
+router.post('/upload', function (req, res) {
 
     console.log(" ########## POST /upload ####### ");
     var fileTypeError = false;
@@ -111,19 +111,19 @@ router.post('/upload', function(req, res) {
     var fields = [];
     var files = [];
 
-    form.on('field', function(field, value) {
+    form.on('field', function (field, value) {
         fields.push([field, value]);
     });
-    form.on('file', function(field, file) {
+    form.on('file', function (field, file) {
         console.log('upload file: ' + file.name);
         //判断文件类型是否是xlsx
-        if (file.type != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-            fileTypeError = true;
-        }
+        // if (file.type != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        //     fileTypeError = true;
+        // }
         files.push([field, file]);
     });
 
-    form.on('end', function() {
+    form.on('end', function () {
 
         //遍历上传文件
         var fileName = '';
@@ -131,7 +131,8 @@ router.post('/upload', function(req, res) {
         var folder_exists = fs.existsSync(target_path);
         if (folder_exists) {
             var dirList = fs.readdirSync(target_path);
-            dirList.forEach(function(item) {
+            dirList.forEach(function (item) {
+                console.log('---------------' + target_path + '/' + item)
                 if (!fs.statSync(target_path + '/' + item).isDirectory()) {
                     console.log('parse item:' + target_path + '/' + item);
                     fileName = target_path + '/' + item;
@@ -141,29 +142,53 @@ router.post('/upload', function(req, res) {
                         console.log(JSON.stringify(obj));
                         //插入数据
                         var arrPeople = [];
+                        //从第二行开始导入，第一行为表头
+                        var startRowIndex = 2;
+                        //sheet名称
+                        var sheetName = 'sheet1';
                         obj.forEach(item => {
-                            if (item.name == "Sheet1") {
-                                item.data.forEach(function(people, index) {
+                            if (item.name == sheetName) {
+                                item.data.forEach(function (people, index) {
                                     //从第二行开始导入，第一行为表头
-                                    if (index > 0) {
-                                        arrPeople.push({
-                                            'idcard': people[0],
-                                            'name': people[1],
-                                            'status': people[2] == '生' ? 1 : 0
-                                        });
+                                    if (index > startRowIndex - 2) {
+                                        if (people[9]) {
+                                            arrPeople.push({
+                                                'name': people[1],
+                                                'sex': people[2],
+                                                'birthday': people[3],
+                                                'age': people[4],
+                                                'description': people[5],
+                                                'retiretime': people[6],
+                                                'subsidy': people[7],
+                                                'address': people[8],
+                                                'idnum': people[9],
+                                                'tel': people[10],
+                                                'isdead': 1
+                                            });
+                                        }
                                     }
                                 })
                             }
                         })
 
-                        People.bulkCreate(arrPeople).then(function(result) {
+                        People.bulkCreate(arrPeople).then(function (result) {
                             console.log("###########批量导入##########");
                             console.log(result);
-                            //todo
-                            res.send({
-                                "Code": "0",
-                                "message": "成功导入数据"
-                            });
+
+                            People.destroy({
+                                where: {
+                                    idnum: {
+                                        '$eq': null
+                                    }
+                                }
+                            }).then(function () {
+                                //todo
+                                res.send({
+                                    "Code": "0",
+                                    "message": "成功导入数据"
+                                });
+                            })
+
                         });
 
                     } else {
@@ -185,13 +210,13 @@ router.post('/upload', function(req, res) {
         }
 
     });
-    form.on('error', function(err) {
+    form.on('error', function (err) {
         res.send({
             "rtnCode": "1",
             "rtnInfo": "上传出错"
         });
     });
-    form.on('aborted', function() {
+    form.on('aborted', function () {
         res.send({
             "rtnCode": "1",
             "rtnInfo": "放弃上传"

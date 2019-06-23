@@ -9,9 +9,6 @@ var User = db.sequelize.define('User', {
     },
     username: Sequelize.STRING,
     password: { type: Sequelize.STRING, defaultValue: 'zjzhd' },
-    department: Sequelize.STRING,
-    tel: Sequelize.STRING,
-    isAdmin: Sequelize.BOOLEAN
 }, {
     timestamps: false,
     underscored: true,

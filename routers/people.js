@@ -2,8 +2,6 @@ var express = require('express');
 var router = express.Router();
 
 var People = require('../models/people');
-var PeopleRemote = require('../models/peopleRemote');
-var PeopleMssql = require('../models/PeopleMssql');
 var dbms = require('../models/dbMs');
 //统一返回格式
 var responseData = {};
@@ -31,24 +29,18 @@ router.get('/find', function(req, res) {
     var page = req.query.page || 1;
     var limit = Number(req.query.limit || 10);
     var offset = (page - 1) * limit;
-    var idcard = (req.query.idcard || '').trim();
-    var name = (req.query.name || '').trim();
-    var status = (req.query.status || '').trim();
-
+    //var searchValue = (req.query.searchValue || '').trim();
+    console.log(req.query);
     var whereObj = {};
-    if (idcard) {
-        whereObj.idcard = {
-            $like: '%' + idcard + '%'
-        };
+    for(key in req.query){
+        if(key!='limit'&&key!='page'){
+            whereObj[key]={
+                $like:'%'+(req.query)[key]+'%'
+            }
+        }
     }
-    if (name) {
-        whereObj.name = {
-            $like: '%' + name + '%'
-        };
-    }
-    if (status) {
-        whereObj.status = status;
-    }
+
+ 
 
     People.findAndCountAll({
         where: whereObj,

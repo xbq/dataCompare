@@ -7,9 +7,17 @@ var People = db.sequelize.define('People', {
         unique: true,
         autoIncrement: true
     },
-    idcard: Sequelize.STRING,
     name: Sequelize.STRING,
-    status: Sequelize.STRING
+    sex:Sequelize.STRING,
+    birthday:Sequelize.STRING,
+    age:Sequelize.INTEGER,
+    description:Sequelize.STRING,
+    retiretime:Sequelize.STRING,
+    subsidy:Sequelize.STRING,
+    address:Sequelize.STRING,
+    idnum:Sequelize.STRING,
+    tel:Sequelize.STRING,
+    isdead:Sequelize.INTEGER
 }, {
     underscored: true,
     timestamps: false,

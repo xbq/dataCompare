@@ -1,14 +1,13 @@
 {% extends 'layout.html' %} {% block main %}
-<link rel="stylesheet" href="/public/css/manager/userList.css">
 <style>
     .layui-elem-quote {
         border-left: 5px solid #1789FF;
     }
-    
+
     .btn-lightblue {
         background-color: #1789FF;
     }
-    
+
     .content {
         background-color: transparent;
         position: fixed;
@@ -21,23 +20,23 @@
         right: 0;
         padding-bottom: 15px;
     }
-    
+
     .content-left {
         padding-top: 0px;
         width: calc(25% - 10px);
         margin-left: 10px;
     }
-    
+
     .content-right {
         overflow: auto;
         height: 100%;
         padding-top: 0px;
     }
-    
+
     .localData {
         height: 614px;
     }
-    
+
     .labelSpan {
         width: 100%;
         display: inline-block;
@@ -46,7 +45,7 @@
         height: 40px;
         line-height: 40px;
     }
-    
+
     .dataSpan {
         height: 60px;
         line-height: 60px;
@@ -58,39 +57,95 @@
         font-family: DIN-Regular;
         margin-right: 5px;
     }
+
+    .layui-table-cell {
+        padding: 0;
+    }
+
+    .islive {
+        color: rgba(0, 255, 255)
+    }
+
+    .isdead {
+        color: rgba(255, 0, 43)
+    }
 </style>
 <div class="layui-row layui-col-space10 content">
     <div class="layui-col-md3 content-left" style="height:100%">
         <div class="layui-card" style="height:100%">
             <div class="layui-card-header">本地数据录入</div>
             <div class="layui-card-body">
-                <form class="layui-form" action="" style="margin-top: 20px;">
+                <form class="layui-form" action="">
                     <div class="layui-form-item">
-
                         <label class="layui-form-label">身份证号</label>
                         <div class="layui-input-block">
-                            <input type="text" name="idcard" autocomplete="off" placeholder="输入身份证号" class="layui-input">
+                            <input type="text" name="idcard" autocomplete="off" placeholder="输入身份证号"
+                                class="layui-input">
                         </div>
-
                     </div>
                     <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">姓名</label>
                         <div class="layui-input-block">
                             <input type="text" name="name" placeholder="输入姓名" class="layui-input">
                         </div>
                     </div>
-                    <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">健康情况</label>
+                    <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">性别</label>
                         <div class="layui-input-block">
-                            <select name="status" id="status">
-                                    <option value="1">生</option>
-                                    <option value="0">卒</option>
-                                </select>
+                            <input type="radio" name="sex" value="男" title="男" checked="">
+                            <input type="radio" name="sex" value="女" title="女">
                         </div>
                     </div>
-
+                    <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">出身年月</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="birthday" id="birthday" placeholder="输入出身年月" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item"><label class="layui-form-label"
+                            style="text-align: center">年龄(周岁)</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="age" placeholder="输入周岁年龄" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">人员类别</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="description" placeholder="请输入人员类别明细" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">精减时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="retiretime" id="retiretime" placeholder="输入精减时间"
+                                class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">补助标准</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="subsidy" placeholder="输入补助标准" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">现居住地</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="address" placeholder="输入现居住地" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">联系方式</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="tel" placeholder="输入联系方式" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">健康状况</label>
+                        <div class="layui-input-block">
+                                <select class="layui-input" name="isdead">
+                                        <option value="">请选择健康状况</option>
+                                        <option value="0">已故</option>
+                                        <option value="1">未知</option>
+                                        <option value="2">健在</option>
+                                    </select>
+                        </div>
+                    </div>
                     <div class="layui-form-item">
                         <div class="layui-input-block" style="text-align: right;">
-                            <button class="layui-btn" lay-submit lay-filter="addPeople" style="color: #fff;background: #1789FF;">提交
-                                </button>
+                            <button class="layui-btn" lay-submit lay-filter="addPeople"
+                                style="color: #fff;background: #1789FF;">提交
+                            </button>
                             <button type="reset" class="layui-btn layui-btn-primary" id="btnReset">重置</button>
                         </div>
                     </div>
@@ -113,30 +168,48 @@
         <div class="layui-card localData">
             <div class="layui-card-header">本地数据</div>
             <div class="layui-card-body">
-                <form class="layui-form x-left layui-elem-quote" action="" style="padding:10px 15px;margin-bottom: 0;height: 38px;">
+                <form class="layui-form x-left layui-elem-quote" action=""
+                    style="padding:10px 15px;margin-bottom: 0;height: 38px;">
                     <div class="layui-form-pane">
-                        <div class="layui-input-inline" style="width:200px;margin-right: 15px">
-                            <input type="text" name="idcard" autocomplete="off" placeholder="身份证关键字" class="layui-input">
-                        </div>
-                        <div class="layui-input-inline" style="width:140px;margin-right: 15px">
-                            <input type="text" name="name" autocomplete="off" placeholder="姓名关键字" class="layui-input">
-                        </div>
-                        <div class="layui-input-inline" style="width:140px;margin-right: 15px">
-                            <select name="status" id="status">
-                                <option value="">请选择生卒情况</option>
-                                <option value="1">生</option>
-                                <option value="0">卒</option>
+                        <div class="layui-input-inline">
+                            <select class="layui-input" name="searchKey" id="searchKey" lay-verify="required"
+                                lay-filter="changeField">
+                                <option value="">选择要查询的字段</option>
+                                <option value="idnum">身份证</option>
+                                <option value="name">姓名</option>
+                                <option value="age">年龄</option>
+                                <option value="birthdat">生月</option>
+                                <option value="sex">性别</option>
+                                <option value="description">人员类别</option>
+                                <option value="retiretime">精简时间</option>
+                                <option value="subsidy">补助标准</option>
+                                <option value="address">现居住地</option>
+                                <option value="tel">联系方式</option>
+                                <option value="isdead">健康状况</option>
                             </select>
                         </div>
+                        <div class="layui-input-inline" id="searchValueWrap" style="width:200px;margin-right: 15px">
+                            <input type="text" name="searchValue" id="searchValue" autocomplete="off" placeholder="关键字"
+                                class="layui-input">
+
+                        </div>
+                        <div class="layui-input-inline" id="search-isdeadWrap"
+                            style="width:200px;margin-right: 15px;display:none">
+                            <select class="layui-input" id="search-isdead">
+                                <option value="">请选择健康状况</option>
+                                <option value="0">已故</option>
+                                <option value="1">未知</option>
+                                <option value="2">健在</option>
+                            </select>
+                        </div>
+
                         <div class="layui-input-inline">
                             <button class="layui-btn btn-lightblue" lay-submit="" lay-filter="searchProject"><i
                                     class="layui-icon">&#xe615;</i>查询</button>
                         </div>
-
-                        <button id="btnCompare" class="layui-btn x-right btn-lightblue" lay-submit="" lay-filter="compareData" style="float: right;margin-left: 10px">数据对比</button>
-
                     </div>
                 </form>
+                <button id="btnCompare" class="layui-btn x-right btn-lightblue" lay-filter="compareData" style="position: absolute;right: 30px;top: 20px;">远程数据</button>
                 <table id="peopleList" style="margin:10px 15px;" lay-filter="handler"></table>
                 <script type="text/html" id="toolBar">
                     <a class="layui-btn layui-btn-sm btn-lightblue" lay-event="edit">编辑</a>
@@ -146,44 +219,13 @@
         </div>
         <div class="layui-card">
             <div class="layui-card-body layui-row" style="height:100px">
-                <div class="layui-col-md3">
+                <div class="layui-col-md6">
                     <span class="labelSpan">本地选中数据条数</span>
                     <span class="dataSpan" id="selectedCount">0</span><span>条</span>
                 </div>
-                <div class="layui-col-md3">
+                <div class="layui-col-md6">
                     <span class="labelSpan">远程对应数据</span>
                     <span class="dataSpan" id="selectRemoteCount">0</span><span>条</span>
-                </div>
-                <div class="layui-col-md3">
-                    <span class="labelSpan">存在差异数据</span>
-                    <span class="dataSpan" id="changeCount">0</span><span>条</span>
-                </div>
-                <div class="layui-col-md3">
-                    <span class="labelSpan">无差异数据</span>
-                    <span class="dataSpan" id="noChangeCount">0</span><span>条</span>
-                </div>
-            </div>
-        </div>
-        <div class="layui-card">
-            <div class="layui-card-header">数据对比</div>
-            <div class="layui-card-body">
-                <div class="layui-row layui-col-space15">
-                    <div class="layui-col-md6">
-                        <div class="layui-card">
-                            <div class="layui-card-header">本地数据</div>
-                            <div class="layui-card-body">
-                                <table id="peopleSelectList" style="margin:10px 15px;" lay-filter="handler"></table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layui-col-md6">
-                        <div class="layui-card">
-                            <div class="layui-card-header">远程数据</div>
-                            <div class="layui-card-body">
-                                <table id="peopleRemoteList" style="margin:10px 15px;" lay-filter="handler"></table>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

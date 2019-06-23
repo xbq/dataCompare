@@ -1,6 +1,21 @@
 layui.use(['form', 'laydate'], function() {
     var $ = layui.jquery;
     var form = layui.form;
+    var laydate = layui.laydate;
+
+    laydate.render({
+        elem:"#retiretime",
+        type:"month",
+        format:"yyyyMM",
+        trigger:"click"
+    })
+
+    laydate.render({
+        elem:"#birthday",
+        type:"month",
+        format:"yyyyMM",
+        trigger:"click"
+    })
 
     $(function() {
         var id = getUrlParam('id');
@@ -8,9 +23,16 @@ layui.use(['form', 'laydate'], function() {
             url: "/people/getById?id=" + id,
             success: function(res) {
                 if (res.data) {
-                    $("#idcard").val(res.data.idcard);
+                    $("#idnum").val(res.data.idnum);
                     $("#name").val(res.data.name);
-                    $("#status").val(res.data.status);
+                    $("#birthday").val(res.data.birthday);
+                    $("[name='sex'][value='"+res.data.sex+"']").attr('checked',true);
+                    $("#age").val(res.data.age);
+                    $("#description").val(res.data.description);
+                    $("#retiretime").val(res.data.retiretime);
+                    $("#subsidy").val(res.data.subsidy);
+                    $("#address").val(res.data.address);
+                    $("#tel").val(res.data.tel);
                     $("#id").val(res.data.id);
                     form.render();
                 }
@@ -42,7 +64,6 @@ layui.use(['form', 'laydate'], function() {
                                     id: 'peopleList'
                                 });
                             }
-
                         }
                     });
                 } else {
