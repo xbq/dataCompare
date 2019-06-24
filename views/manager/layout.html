@@ -84,21 +84,22 @@
         <div class="layui-header" style="background-color: #1789FF;height: 50px">
             <div class="layui-logo" style="text-align:left;padding-left:20px"><span class="logoSpan">民政信息查询系统</span></div>
             <!-- 头部区域（可配合layui已有的水平导航） -->
-            <ul class="layui-nav layui-layout-right" style="right: 100px">
+            <!-- <ul class="layui-nav layui-layout-right" style="right: 100px">
                 <li class="layui-nav-item"><a href="/peopleList">数据对比</a></li>
                 <li class="layui-nav-item"><a href="/dbSet">服务设置</a></li>
 
-            </ul>
+            </ul> -->
             <ul class="layui-nav layui-layout-right" style="margin-right:15px">
                 <li class="layui-nav-item">
-                    <a href="javascript:;" style="font-size: 16px;color: white;">
+                    <!-- <a href="javascript:;" style="font-size: 16px;color: white;">
                         <img src="/public/images/tx.jpg" class="layui-nav-img"> {{userInfo.username}}
-                    </a>
-                    <dl class="layui-nav-child">
+                    </a> -->
+                    <!-- <dl class="layui-nav-child">
                         <dd><a href="javascript:;" id="infomation">基本资料</a></dd>
                         <dd><a href="javascript:;" id="passwordSet">安全设置</a></dd>
-                        <dd><a id="btn_logout" href="javascript:;" onclick="logout()">退出</a></dd>
-                    </dl>
+                        <dd></dd>
+                    </dl> -->
+                    <a id="btn_logout" href="javascript:;" onclick="logout()">退出</a>
                 </li>
             </ul>
             <input type="hidden" id="userId" value="{{userInfo.id}}">
