@@ -1,5 +1,6 @@
-var express = require('express');
+var  express = require('express');
 var router = express.Router();
+var request = require('request');
 
 var People = require('../models/people');
 var dbms = require('../models/dbMs');
@@ -221,5 +222,31 @@ function isObjectValueEqual(a, b, ignoreAttrs = []) {
     }
     return true;
 }
+
+router.get('/layuiUser',(req,res,next)=>{
+    request('https://www.layui.com/demo/table/user', function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        res.json({data:body}) // Show the HTML for the baidu homepage.
+      }
+    })
+})
+
+router.post('/compareData',(req,res)=>{
+    request({
+        url: req.body.url,
+        method: "POST",
+        json: true,
+        headers: {
+            "content-type": "application/json",
+        },
+        body: req.body
+    }, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            res.json({data:body});
+        }else{
+            res.json({error:error});
+        }
+    }); 
+})
 
 module.exports = router;

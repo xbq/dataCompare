@@ -207,16 +207,16 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
                 var sign = md5(appkey + appsecret + requestTime);
                 console.log(sign);
                 $.ajax({
-                    url: 'https://interface.zjzwfw.gov.cn/gateway/api/001003010/dataSharing/cremationInfo.htm',
+                    url: '/people/compareData',
                     async: false,
                     type: 'post',
                     data: {
+                        url: 'https://interface.zjzwfw.gov.cn/gateway/api/001003010/dataSharing/cremationInfo.htm',
                         requestTime: requestTime,
                         cardId: people.idnum,
                         sign: sign,
                         appKey: appkey,
-                        additional: {
-                            "powerMatters": "许可0000-00",
+                        additional: {"powerMatters": "许可0000-00",
                             "subPowerMatters": "许可0000-0101",
                             "accesscardId": people.idnum,
                             "materialName": "社会团体变更登记申请表",
