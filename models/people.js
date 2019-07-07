@@ -10,7 +10,7 @@ var People = db.sequelize.define('People', {
     name: Sequelize.STRING,
     sex:Sequelize.STRING,
     birthday:Sequelize.STRING,
-    age:Sequelize.INTEGER,
+    age:Sequelize.STRING,
     description:Sequelize.STRING,
     retiretime:Sequelize.STRING,
     subsidy:Sequelize.STRING,

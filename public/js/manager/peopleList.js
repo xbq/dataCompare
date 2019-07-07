@@ -36,6 +36,18 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
             }
         }
     });
+
+    
+
+    form.on('checkbox(layTableAllChoose)', function (data) {
+            var child = $(data.elem).parents('.layui-tab-item').find('input[type="checkbox"]');
+            child.each(function (index, item) {
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+
+
     //第一个实例
     var peopleTable = table.render({
         elem: '#peopleList',
@@ -47,7 +59,8 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
         cols: [
             [ //表头
                 {
-                    type: 'checkbox'
+                    type: 'checkbox',
+                    LAY_CHECKED:true
                 },
                 {
                     field: 'name',
@@ -129,7 +142,7 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
                 }
             ]
         ],
-        limits: [1, 10, 20, 50, 100],
+        limits: [10,50,100,500,10000],
         limit: 10
     });
 
@@ -192,20 +205,18 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
         });
         return false;
     });
-
+    var appkey = 'ba5a7fb793d44a6aa28017beb2098bb2';
+    var appsecret = '10926f335f624ea3b67abdd419782c73';
     $("#btnCompare").click(function() {
         var checkStatus = table.checkStatus(peopleTable.config.id);
         var selectedCount = checkStatus.data.length
         $("#selectedCount").text(selectedCount);
         var rmeoteCount = 0;
         //拿到每条数据的唯一标识，将唯一标识用逗号隔开传给后台，后台返回不相同的数据即可
-        checkStatus.data.forEach(function(item) {
-            var appkey = 'ba5a7fb793d44a6aa28017beb2098bb2';
-            var appsecret = '10926f335f624ea3b67abdd419782c73';
+        checkStatus.data.forEach(function(item,index) {
             (function(people) {
                 var requestTime = new Date().getTime();
                 var sign = md5(appkey + appsecret + requestTime);
-                console.log(sign);
                 $.ajax({
                     url: '/people/compareData',
                     async: false,
@@ -216,13 +227,13 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
                         cardId: people.idnum,
                         sign: sign,
                         appKey: appkey,
-                        additional: {"powerMatters": "许可0000-00",
-                            "subPowerMatters": "许可0000-0101",
+                        additional: {"powerMatters": "",
+                            "subPowerMatters": "",
                             "accesscardId": people.idnum,
-                            "materialName": "社会团体变更登记申请表",
-                            "sponsorName": "阿里巴巴（中国）有限公司",
-                            "sponsorCode": "91330100799655058B",
-                            "projectId": "330000261711151100004"
+                            "materialName": "",
+                            "sponsorName": "",
+                            "sponsorCode": "",
+                            "projectId": ""
                         }
                     },
                     success: function(res) {

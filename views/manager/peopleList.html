@@ -71,20 +71,20 @@
     }
 </style>
 <div class="layui-row layui-col-space10 content">
-    <div class="layui-col-md3 content-left" style="height:100%">
-        <div class="layui-card" style="height:100%">
+    <div class="layui-col-md3 content-left" style="height:100%;overflow: auto;">
+        <div class="layui-card">
             <div class="layui-card-header">本地数据录入</div>
             <div class="layui-card-body">
                 <form class="layui-form" action="">
                     <div class="layui-form-item">
                         <label class="layui-form-label">身份证号</label>
                         <div class="layui-input-block">
-                            <input type="text" name="idcard" autocomplete="off" placeholder="输入身份证号" class="layui-input">
+                            <input type="text" name="idnum" autocomplete="off" placeholder="输入身份证号" class="layui-input"  lay-verify="required" lay-reqtext="身份证号码为必填项！">
                         </div>
                     </div>
                     <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">姓名</label>
                         <div class="layui-input-block">
-                            <input type="text" name="name" placeholder="输入姓名" class="layui-input">
+                            <input type="text" name="name" placeholder="输入姓名" class="layui-input"  lay-verify="required" lay-reqtext="姓名为必填项！">
                         </div>
                     </div>
                     <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">性别</label>
@@ -131,7 +131,7 @@
                     <div class="layui-form-item"><label class="layui-form-label" style="text-align: center">健康状况</label>
                         <div class="layui-input-block">
                             <select class="layui-input" name="isdead">
-                                        <option value="">请选择健康状况</option>
+                                        <option value="1">请选择健康状况</option>
                                         <option value="0">已故</option>
                                         <option value="1">未知</option>
                                         <option value="2">健在</option>
