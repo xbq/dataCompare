@@ -37,17 +37,6 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
         }
     });
 
-    
-
-    form.on('checkbox(layTableAllChoose)', function (data) {
-            var child = $(data.elem).parents('.layui-tab-item').find('input[type="checkbox"]');
-            child.each(function (index, item) {
-                item.checked = data.elem.checked;
-            });
-            form.render('checkbox');
-        });
-
-
     //第一个实例
     var peopleTable = table.render({
         elem: '#peopleList',
@@ -59,8 +48,7 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
         cols: [
             [ //表头
                 {
-                    type: 'checkbox',
-                    LAY_CHECKED:true
+                    type: 'checkbox'
                 },
                 {
                     field: 'name',
@@ -142,7 +130,7 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
                 }
             ]
         ],
-        limits: [10,50,100,500,10000],
+        limits: [10, 50, 100, 500, 10000],
         limit: 10
     });
 
@@ -213,7 +201,7 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
         $("#selectedCount").text(selectedCount);
         var rmeoteCount = 0;
         //拿到每条数据的唯一标识，将唯一标识用逗号隔开传给后台，后台返回不相同的数据即可
-        checkStatus.data.forEach(function(item,index) {
+        checkStatus.data.forEach(function(item, index) {
             (function(people) {
                 var requestTime = new Date().getTime();
                 var sign = md5(appkey + appsecret + requestTime);
@@ -227,7 +215,8 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
                         cardId: people.idnum,
                         sign: sign,
                         appKey: appkey,
-                        additional: {"powerMatters": "",
+                        additional: {
+                            "powerMatters": "",
                             "subPowerMatters": "",
                             "accesscardId": people.idnum,
                             "materialName": "",
