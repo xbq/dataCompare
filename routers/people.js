@@ -1,11 +1,102 @@
-var  express = require('express');
+var express = require('express');
 var router = express.Router();
 var request = require('request');
 
 var People = require('../models/people');
 var dbms = require('../models/dbMs');
+var md5 = require('js-md5');
 //统一返回格式
 var responseData = {};
+
+var signObj = {};
+
+var appkey = 'ba5a7fb793d44a6aa28017beb2098bb2';
+var appsecret = '10926f335f624ea3b67abdd419782c73';
+var refreshSecret = signObj.refreshSecret;
+var refreshSecretEndTime = signObj.refreshSecretEndTime;
+var requestSecretEndTime = signObj.requestSecretEndTime;
+var requestTime = new Date().getTime();
+
+
+// (function(){
+//         var sign = md5(appkey + appsecret + requestTime);
+//         request.post({url:'http://59.202.58.68/gateway/app/refreshTokenByKey.htm', form:{
+//                 appKey: appkey,
+//                 sign: sign,
+//                 requestTime: requestTime
+//             }}, function(error, response, body) {
+//     if (!error && response.statusCode == 200) {
+//         signObj = body;
+//             setInterval(function() {
+//                 var refreshSecret = signObj.refreshSecret;
+//                 var sign = md5(appkey + refreshSecret + new Date().getTime());
+//                 refreshRequireSecret(appkey, sign, requestTime)
+//             }, 15 * 60 * 1000)
+
+//     }else{
+//         signObj = error;
+//     }
+// })();
+
+
+
+
+
+(function() {
+    //如果没有刷新秘钥或者刷新秘钥过期，重新通过refreshTokenByKey获取一组刷新秘钥和请求秘钥
+    if (!refreshSecret || refreshSecretEndTime < requestTime) {
+        var sign = md5(appkey + appsecret + requestTime);
+        request.post({url:'http://59.202.58.68/gateway/app/refreshTokenByKey.htm', form:{
+                appKey: appkey,
+                sign: sign,
+                requestTime: requestTime
+            }}, function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+        signObj = body;
+    }else{
+        signObj = error;
+    }
+})
+    } else {
+        //请求秘钥过期
+        if (requestSecretEndTime < requestTime) {
+            var refreshSecret = signObj.refreshSecret;
+            var sign = md5(appkey + refreshSecret + requestTime);
+            //先通过refreshTokenBySec获取一组新的刷新秘钥和请求秘钥
+            refreshRequireSecret(appkey, sign, requestTime);
+            //然后启动定时器  15分钟刷新一次  保证请求秘钥是有效的
+            setInterval(function() {
+                var refreshSecret = signObj.refreshSecret;
+                var sign = md5(appkey + refreshSecret + requestTime);
+                refreshRequireSecret(appkey, sign, requestTime)
+            }, 15 * 60 * 1000)
+        }
+    }
+})();
+
+router.get('/getSecret', function(req, res) {
+    console.log(signObj);
+    res.json(signObj);
+});
+
+
+
+function refreshRequireSecret(appkey, sign, requestTime) {
+
+    request.post({url:'http://59.202.58.68/gateway/app/refreshTokenBySec.htm', form:{
+            appKey: appkey,
+            sign: sign,
+            requestTime: requestTime
+        }}, function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+        signObj = body;
+    }else{
+        signObj = error;
+    }
+})
+
+
+}
 
 //项目列表
 router.get('/all', function(req, res) {
@@ -33,15 +124,15 @@ router.get('/find', function(req, res) {
     //var searchValue = (req.query.searchValue || '').trim();
     console.log(req.query);
     var whereObj = {};
-    for(key in req.query){
-        if(key!='limit'&&key!='page'){
-            whereObj[key]={
-                $like:'%'+(req.query)[key]+'%'
+    for (key in req.query) {
+        if (key != 'limit' && key != 'page') {
+            whereObj[key] = {
+                $like: '%' + (req.query)[key] + '%'
             }
         }
     }
 
- 
+
 
     People.findAndCountAll({
         where: whereObj,
@@ -223,30 +314,24 @@ function isObjectValueEqual(a, b, ignoreAttrs = []) {
     return true;
 }
 
-router.get('/layuiUser',(req,res,next)=>{
-    request('https://www.layui.com/demo/table/user', function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        res.json({data:body}) // Show the HTML for the baidu homepage.
-      }
+router.get('/layuiUser', (req, res, next) => {
+    request('https://www.layui.com/demo/table/user', function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            res.json({ data: body }) // Show the HTML for the baidu homepage.
+        }
     })
 })
 
-router.post('/compareData',(req,res)=>{
-    request({
-        url: req.body.url,
-        method: "POST",
-        json: true,
-        headers: {
-            "content-type": "application/json",
-        },
-        body: req.body
-    }, function(error, response, body) {
-        if (!error && response.statusCode == 200) {
-            res.json({data:body});
-        }else{
-            res.json({error:error});
+router.post('/compareData', (req, res) => {
+    console.log('req',req);
+    request.post({url:'https://interface.zjzwfw.gov.cn/gateway/api/001003010/dataSharing/cremationInfo.htm', form:req.body}, function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+            res.json(JSON.parse(body));
+        } else {
+            res.json({ error: error });
         }
-    }); 
+})
+
 })
 
 module.exports = router;

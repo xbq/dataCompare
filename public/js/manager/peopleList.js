@@ -6,6 +6,8 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
     var upload = layui.upload;
     var laydate = layui.laydate;
 
+    var appkey = 'ba5a7fb793d44a6aa28017beb2098bb2';
+
     laydate.render({
         elem: "#retiretime",
         type: "month",
@@ -193,71 +195,138 @@ layui.use(['upload', 'table', 'form', 'layer', 'laydate'], function() {
         });
         return false;
     });
-    var appkey = 'ba5a7fb793d44a6aa28017beb2098bb2';
-    var appsecret = '10926f335f624ea3b67abdd419782c73';
+
     $("#btnCompare").click(function() {
         var checkStatus = table.checkStatus(peopleTable.config.id);
         var selectedCount = checkStatus.data.length
         $("#selectedCount").text(selectedCount);
-        var rmeoteCount = 0;
+        $("#selectRemoteCount")[0].innerHTML='0';
+
         //拿到每条数据的唯一标识，将唯一标识用逗号隔开传给后台，后台返回不相同的数据即可
         checkStatus.data.forEach(function(item, index) {
             (function(people) {
                 var requestTime = new Date().getTime();
-                var sign = md5(appkey + appsecret + requestTime);
+
                 $.ajax({
-                    url: '/people/compareData',
+                    url: '/people/getSecret',
+                    type: 'get',
                     async: false,
-                    type: 'post',
-                    data: {
-                        url: 'https://interface.zjzwfw.gov.cn/gateway/api/001003010/dataSharing/cremationInfo.htm',
-                        requestTime: requestTime,
-                        cardId: people.idnum,
-                        sign: sign,
-                        appKey: appkey,
-                        additional: {
-                            "powerMatters": "",
-                            "subPowerMatters": "",
-                            "accesscardId": people.idnum,
-                            "materialName": "",
-                            "sponsorName": "",
-                            "sponsorCode": "",
-                            "projectId": ""
-                        }
-                    },
                     success: function(res) {
-                        if (res.code == '00' && res.dataCount > 0) {
-                            rmeoteCount++;
-                            //调用本地接口，修改对应数据的isdead字段
-                            $.ajax({
-                                type: 'POST',
-                                async: false,
-                                url: '/people/update',
-                                data: {
-                                    id: people.id,
-                                    isdead: 0
+                        res = JSON.parse(res);
+                        var requestTime = new Date().getTime();
+                        var requestSecret = res.datas.requestSecret;
+                        var sign = md5(appkey + requestSecret + requestTime);
+                        $.ajax({
+                            url: '/people/compareData',
+                            async: false,
+                            type: 'post',
+                            data: {
+                                requestTime: requestTime,
+                                cardId: people.idnum,
+                                sign: sign,
+                                appKey: appkey,
+                                additional: {
+                                    "powerMatters": "",
+                                    "subPowerMatters": "",
+                                    "accesscardId": people.idnum,
+                                    "materialName": "",
+                                    "sponsorName": "",
+                                    "sponsorCode": "",
+                                    "projectId": ""
                                 }
-                            });
-                        } else {
-                            $.ajax({
-                                type: 'POST',
-                                async: false,
-                                url: '/people/update',
-                                data: {
-                                    id: people.id,
-                                    isdead: 2
+                            },
+                            success: function(res) {
+                                console.log('res', res);
+                                if (res.code == '00') {
+                                    if (res.dataCount > 0) {
+                                        debugger
+                                        var remoteCount=parseInt($("#selectRemoteCount")[0].innerHTML);
+                                                        remoteCount++;
+                                                        $("#selectRemoteCount")[0].innerHTML=remoteCount;
+                                        //调用本地接口，修改对应数据的isdead字段
+                                        $.ajax({
+                                            type: 'POST',
+                                            async: false,
+                                            url: '/people/update',
+                                            data: {
+                                                id: people.id,
+                                                isdead: 0
+                                            }
+                                        });
+                                    } else {
+                                        //如果二代身份证查不到结果，使用转化后的一代身份证查一次
+                                        $.ajax({
+                                            url: '/people/compareData',
+                                            async: false,
+                                            type: 'post',
+                                            data: {
+                                                requestTime: requestTime,
+                                                cardId: people.idnum.substr(0, 6) + people.idnum.substr(8, 9),
+                                                sign: sign,
+                                                appKey: appkey,
+                                                additional: {
+                                                    "powerMatters": "",
+                                                    "subPowerMatters": "",
+                                                    "accesscardId": people.idnum.substr(0, 6) + people.idnum.substr(8, 9),
+                                                    "materialName": "",
+                                                    "sponsorName": "",
+                                                    "sponsorCode": "",
+                                                    "projectId": ""
+                                                }
+                                            },
+                                            success: function(res) {
+                                                console.log('res', res);
+                                                if (res.code == '00') {
+                                                    if (res.dataCount > 0) {
+                                                        debugger
+                                                        var remoteCount=parseInt($("#selectRemoteCount")[0].innerHTML);
+                                                        remoteCount++;
+                                                        $("#selectRemoteCount")[0].innerHTML=remoteCount;
+                                                        //调用本地接口，修改对应数据的isdead字段
+                                                        $.ajax({
+                                                            type: 'POST',
+                                                            async: false,
+                                                            url: '/people/update',
+                                                            data: {
+                                                                id: people.id,
+                                                                isdead: 0
+                                                            }
+                                                        });
+                                                    } else {
+                                                        $.ajax({
+                                                            type: 'POST',
+                                                            async: false,
+                                                            url: '/people/update',
+                                                            data: {
+                                                                id: people.id,
+                                                                isdead: 2
+                                                            }
+                                                        });
+                                                    }
+                                                } else {
+                                                    console.log('err', res);
+                                                }
+                                            },
+                                            error: function(err) {
+                                                console.log(err);
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    console.log('err', res);
                                 }
-                            });
-                        }
-                    },
-                    error: function(err) {
-                        console.log(err);
+                            },
+                            error: function(err) {
+                                console.log(err);
+                            }
+                        });
                     }
-                });
+                })
+
             })(item)
         })
 
-        $("#selectRemoteCount").val(rmeoteCount);
+        
         //刷新列表
         var searchKey = $("#searchKey").val();
         var where = {};

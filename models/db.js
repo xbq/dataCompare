@@ -1,6 +1,6 @@
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-var sequelize = new Sequelize('datacompare', 'root', '', {
+var sequelize = new Sequelize('datacompare', 'root', '12345', {
     host: 'localhost',
     dialect: 'mysql',
     pool: {

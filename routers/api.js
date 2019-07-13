@@ -98,7 +98,6 @@ router.get('/dbSet', function (req, res, next) {
 
 
 router.post('/upload', function (req, res) {
-
     console.log(" ########## POST /upload ####### ");
     var fileTypeError = false;
     var target_path = __dirname + "/upload";
