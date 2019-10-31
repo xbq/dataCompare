@@ -26,7 +26,7 @@
     "node-xlsx": "^0.15.0",
     "nodemon": "^1.18.7",
     "request": "^2.88.0",
-    "sequelize": "^4.34.0",
+    "sequelize": "^5.15.1",
     "serve-favicon": "~2.4.5",
     "swig": "^1.4.2",
     "tedious": "^6.1.1"
