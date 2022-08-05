@@ -18,7 +18,7 @@
     "js-md5": "^0.7.3",
     "jshint": "^2.9.5",
     "markdown": "^0.5.0",
-    "mongoose": "^5.0.3",
+    "mongoose": "^5.7.5",
     "morgan": "~1.9.0",
     "mssql": "^5.1.0",
     "mysql": "^2.15.0",
